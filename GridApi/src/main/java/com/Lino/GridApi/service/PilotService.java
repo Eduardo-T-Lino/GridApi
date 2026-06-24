@@ -3,12 +3,15 @@ package com.Lino.GridApi.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.Lino.GridApi.dto.PilotRequestDTO;
-import com.Lino.GridApi.dto.PilotResponseDTO;
+import com.Lino.GridApi.dto.pilot.PilotRequestDTO;
+import com.Lino.GridApi.dto.pilot.PilotResponseDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotComposedRequestDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotComposedResponseDTO;
 import com.Lino.GridApi.mapper.PilotMapper;
 import com.Lino.GridApi.model.Circuit;
 import com.Lino.GridApi.model.Pilot;
 import com.Lino.GridApi.repository.CircuitRepository;
+import com.Lino.GridApi.repository.FIALicenseRepository;
 import com.Lino.GridApi.repository.PilotRepository;
 
 import org.springframework.transaction.annotation.Transactional;
@@ -20,22 +23,50 @@ public class PilotService {
     @Autowired
     private PilotRepository pilotRepository;
 
+    // Inhibit the creation of contructor methods
+    @Autowired
+    private FIALicenseRepository licenseRepository;
+
+    // Inhibit the creation of contructor methods
     @Autowired
     private CircuitRepository circuitRepository;
 
     @Transactional // Perform a rollback in case of an error
-    public PilotResponseDTO saveComposed(PilotRequestDTO dto) { // Make the save of the pilot and circuit together.
+    public PilotResponseDTO simpleSave (PilotRequestDTO dto) { // Make the save of the pilot in the DB
 
-        // Check if the age was provided and if the pilot is under 18.
-        if (dto.age() == null) {
-            throw new IllegalArgumentException("The age field is mandatory!");
+        // Check if the name of the pilot already exist in the DB
+        if (pilotRepository.existsByName(dto.name())) {
+            throw new IllegalArgumentException("The pilot with name: " + dto.name() + " is already registered in the grid! ");
         }
 
-        if (dto.age() < 18) {
-            throw new IllegalArgumentException(
-                    "This child is under 18 years old! Tell him to go play video and get off the real track.");
+        // Converse attributes coming from the front end to the class.
+        Pilot pilot = PilotMapper.toSimpleEntity(dto);
+
+        // Save the pilot in the DB
+        pilotRepository.save(pilot);
+
+        // Return a simple pilot to the front end
+        return PilotMapper.toSimpleResponseDTO(pilot);
+        
+    }
+
+    @Transactional // Perform a rollback in case of an error
+    public PilotComposedResponseDTO saveComposed(PilotComposedRequestDTO dto) { // Make the save of the pilot and license together.
+
+        // Check if the name of the pilot already exist in the DB
+        if (pilotRepository.existsByName(dto.name())) {
+            throw new IllegalArgumentException("The pilot with name: " + dto.name() + " is already registered in the grid! ");
         }
 
+        // Check if the license is not null
+        if (dto.fiaLicense() != null) {
+            // Check if the license already exist in the DB
+            boolean licenseExist = licenseRepository.existsByLicenseNumber(dto.fiaLicense().licenseNumber());
+            if (licenseExist) {
+                throw new IllegalArgumentException("The FIA license " + dto.fiaLicense().licenseNumber() + " is already in use by another pilot! ");
+            }
+        }
+        
         // Converse attributes coming from the front end to the class.
         Pilot pilot = PilotMapper.toEntity(dto);
 
@@ -67,7 +98,7 @@ public class PilotService {
 
     // Return the dashboard with all informations of the pilot
     @Transactional(readOnly = true)
-    public PilotResponseDTO getPilotDashboard(Long id) {
+    public PilotComposedResponseDTO getPilotDashboard(Long id) {
 
         // Found the pilot in the DB.
         // With the pilot don't exist, send an error for the user

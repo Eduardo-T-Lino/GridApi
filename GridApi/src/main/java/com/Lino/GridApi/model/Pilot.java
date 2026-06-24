@@ -33,7 +33,7 @@ public class Pilot {
 
     private Integer age;
 
-    private String CurrentTeam;
+    private String currentTeam;
 
     // It relates the pilot table to the license,
     // saying that it's a one-to-one relationship.

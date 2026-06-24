@@ -5,9 +5,11 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
-import com.Lino.GridApi.dto.CircuitResponseDTO;
-import com.Lino.GridApi.dto.PilotRequestDTO;
-import com.Lino.GridApi.dto.PilotResponseDTO;
+import com.Lino.GridApi.dto.pilot.PilotRequestDTO;
+import com.Lino.GridApi.dto.pilot.PilotResponseDTO;
+import com.Lino.GridApi.dto.pilotComposed.CircuitResponseDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotComposedRequestDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotComposedResponseDTO;
 import com.Lino.GridApi.model.FIALicense;
 import com.Lino.GridApi.model.Pilot;
 
@@ -15,7 +17,7 @@ import com.Lino.GridApi.model.Pilot;
 public class PilotMapper {
 
     // Converse attributes coming from the front end to the class.
-    public static Pilot toEntity(PilotRequestDTO dto) {
+    public static Pilot toEntity(PilotComposedRequestDTO dto) {
         
         // Check if the informations coming from the front end is not null
         if (dto == null) return null;
@@ -48,7 +50,7 @@ public class PilotMapper {
     }
 
     // Transform the pilot into a response to send to the front end.
-    public static PilotResponseDTO toResponseDTO (Pilot pilot) {
+    public static PilotComposedResponseDTO toResponseDTO (Pilot pilot) {
 
         // Check if the pilot is not null.
         if (pilot == null) return null;
@@ -64,7 +66,7 @@ public class PilotMapper {
         }
 
         // Return the pilot with all informations and attributes
-        return new PilotResponseDTO(
+        return new PilotComposedResponseDTO(
             pilot.getId(),
             pilot.getName(),
             pilot.getAge(),
@@ -72,6 +74,37 @@ public class PilotMapper {
             pilot.getFiaLicense() != null ? pilot.getFiaLicense().getLicenseNumber() : null,
             pilot.getFiaLicense() != null ? pilot.getFiaLicense().getCategory() : null,
             circuits
+        );
+    }
+
+    // Converse attributes coming from the front end to the class.
+    public static Pilot toSimpleEntity (PilotRequestDTO dto) {
+
+        // Create a new pilot
+        Pilot pilot = new Pilot();
+        // Make the pilot store the data
+        pilot.setName(dto.name());
+        pilot.setAge(dto.age());
+        pilot.setCurrentTeam(dto.currentTeam());
+        pilot.setFiaLicense(null);
+
+        // Return the Pilot.
+        return pilot;
+
+    }
+
+    // Transform the pilot into a response to send to the front end. 
+    public static PilotResponseDTO toSimpleResponseDTO (Pilot pilot) {
+
+        // Check if the pilot is not null.
+        if (pilot == null) return null;
+
+        // Return the pilot to send then to the front end
+        return new PilotResponseDTO(
+            pilot.getId(),
+            pilot.getName(),
+            pilot.getAge(),
+            pilot.getCurrentTeam()
         );
     }
 }

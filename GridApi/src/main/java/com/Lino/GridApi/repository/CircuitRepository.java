@@ -10,4 +10,5 @@ import com.Lino.GridApi.model.Circuit;
 @Repository
 public interface CircuitRepository extends JpaRepository<Circuit, Long>{
 
+    boolean existsByName (String name);
 }

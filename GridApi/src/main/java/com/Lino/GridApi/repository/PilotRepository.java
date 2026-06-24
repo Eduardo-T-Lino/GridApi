@@ -10,4 +10,5 @@ import com.Lino.GridApi.model.Pilot;
 @Repository
 public interface PilotRepository extends JpaRepository<Pilot, Long> {
 
+    boolean existsByName (String name);
 }

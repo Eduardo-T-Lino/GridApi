@@ -10,37 +10,55 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Lino.GridApi.dto.PilotRequestDTO;
-import com.Lino.GridApi.dto.PilotResponseDTO;
+import com.Lino.GridApi.dto.pilot.PilotRequestDTO;
+import com.Lino.GridApi.dto.pilot.PilotResponseDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotComposedRequestDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotComposedResponseDTO;
 import com.Lino.GridApi.service.PilotService;
+
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/pilot")
 public class PilotController {
 
-    @Autowired
     // Call the PilotService 
+    @Autowired
     private PilotService pilotService;
 
-    //POST Compound: Create pilot with the he license and the circuit links
-    @PostMapping("/compound")
-    public ResponseEntity<PilotResponseDTO> saveCompound (@RequestBody PilotRequestDTO dto) {
+    // POST Simple: Create pilot with nothing attached
+    @PostMapping("/simple")
+    public ResponseEntity<PilotResponseDTO> saveSimple (@Valid @RequestBody PilotRequestDTO dto) {
 
         // Call the method that checks the age and save the related
-        PilotResponseDTO response = pilotService.saveComposed(dto);
+        PilotResponseDTO response = pilotService.simpleSave(dto);
 
         // Return the data for the front end with the status (201)
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
+    }
+
+    //POST Compound: Create pilot with the he license and the circuit links
+    @PostMapping("/compound")
+    public ResponseEntity<PilotComposedResponseDTO> saveCompound (@Valid @RequestBody PilotComposedRequestDTO dto) {
+
+        // Call the method that checks the age and save the related
+        PilotComposedResponseDTO response = pilotService.saveComposed(dto);
+
+        // Return the data for the front end with the status (201)
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+
     }
 
     // GET Dashboard: Full search by ID
     @GetMapping("/dashboard/{id}")
-    public ResponseEntity<PilotResponseDTO> getPilotDashboard(@PathVariable Long id) {
+    public ResponseEntity<PilotComposedResponseDTO> getPilotDashboard(@PathVariable Long id) {
 
         // push the datails informations ready for the front end/Swagger
-        PilotResponseDTO response = pilotService.getPilotDashboard(id);
+        PilotComposedResponseDTO response = pilotService.getPilotDashboard(id);
 
         // Return the dashboard if the status is (OK)
         return ResponseEntity.ok(response);
+
     }
 }

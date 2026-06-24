@@ -1,4 +1,4 @@
-package com.Lino.GridApi.dto;
+package com.Lino.GridApi.dto.pilotComposed;
 
 public record CircuitResponseDTO(
     Long id,

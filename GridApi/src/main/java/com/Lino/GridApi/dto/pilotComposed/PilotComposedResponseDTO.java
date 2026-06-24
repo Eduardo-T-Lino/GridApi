@@ -1,8 +1,8 @@
-package com.Lino.GridApi.dto;
+package com.Lino.GridApi.dto.pilotComposed;
 
 import java.util.List;
 
-public record PilotResponseDTO(
+public record PilotComposedResponseDTO(
     Long id,
     String name,
     Integer age,

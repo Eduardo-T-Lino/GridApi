@@ -10,4 +10,6 @@ import com.Lino.GridApi.model.FIALicense;
 @Repository
 public interface FIALicenseRepository extends JpaRepository<FIALicense, Long> {
 
+    boolean existsByLicenseNumber (String license);
+    
 }
