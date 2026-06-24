@@ -73,6 +73,7 @@ public class PilotMapper {
             pilot.getCurrentTeam(),
             pilot.getFiaLicense() != null ? pilot.getFiaLicense().getLicenseNumber() : null,
             pilot.getFiaLicense() != null ? pilot.getFiaLicense().getCategory() : null,
+            pilot.getFiaLicense() != null ? pilot.getFiaLicense().getPenaltyPoints() : null,
             circuits
         );
     }

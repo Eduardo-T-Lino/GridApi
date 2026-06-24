@@ -8,14 +8,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.Lino.GridApi.dto.pilot.PilotRequestDTO;
 import com.Lino.GridApi.dto.pilot.PilotResponseDTO;
+import com.Lino.GridApi.dto.pilot.PilotUpdateRequestDTO;
 import com.Lino.GridApi.dto.pilotComposed.PilotComposedRequestDTO;
 import com.Lino.GridApi.dto.pilotComposed.PilotComposedResponseDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotUpdateComposedRequestDTO;
 import com.Lino.GridApi.service.PilotService;
 
 import jakarta.validation.Valid;
@@ -74,5 +77,29 @@ public class PilotController {
         // Return the list pilots if the status is (OK)
         return ResponseEntity.ok(responses);
         
+    }
+
+    // PUT: Uudate a simple pilot
+    @PutMapping("/update/simple/{id}")
+    public ResponseEntity<PilotResponseDTO> updateSimplePilot(@PathVariable Long id, @Valid @RequestBody PilotUpdateRequestDTO dto) {
+
+        // push the datails informations ready for the front end/Swagger
+        PilotResponseDTO response = pilotService.updateSimplePilot(id, dto);
+
+        // Return the dashboard if the status is (OK)
+        return ResponseEntity.ok(response);
+
+    }
+
+    // PUT: Uudate a componsed pilot
+    @PutMapping("/update/componsed/{id}")
+    public ResponseEntity<PilotComposedResponseDTO> updateComposedPilot(@PathVariable Long id, @Valid @RequestBody PilotUpdateComposedRequestDTO dto) {
+
+        // push the datails informations ready for the front end/Swagger
+        PilotComposedResponseDTO response = pilotService.updateComposedPilot(id, dto);
+
+        // Return the dashboard if the status is (OK)
+        return ResponseEntity.ok(response);
+
     }
 }
