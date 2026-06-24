@@ -1,5 +1,7 @@
 package com.Lino.GridApi.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -96,9 +98,8 @@ public class PilotService {
         return PilotMapper.toResponseDTO(savedPilot);
     }
 
-    // Return the dashboard with all informations of the pilot
-    @Transactional(readOnly = true)
-    public PilotComposedResponseDTO getPilotDashboard(Long id) {
+    @Transactional(readOnly = true) // Perform a rollback in case of an error
+    public PilotComposedResponseDTO getPilotDashboard(Long id) { // Return the dashboard with all informations of the pilot.
 
         // Found the pilot in the DB.
         // With the pilot don't exist, send an error for the user
@@ -107,4 +108,21 @@ public class PilotService {
 
         return PilotMapper.toResponseDTO(pilot);
     }
+
+    @Transactional(readOnly = true) // Perform a rollback in case of an error
+    public List<PilotComposedResponseDTO> getAllPilots () { // Return all the pilots existing in the DB
+
+        // Take all pilots existing in the DB
+        List<Pilot> pilots = pilotRepository.findAll();
+
+        // Check if exist some pilot in the DB
+        if (pilots.size() <= 0 || pilots == null) {
+            throw new RuntimeException("No have any pilot registered in the grid! ");
+        }
+
+        // Return the list pilots.
+        return pilots.stream().map(PilotMapper :: toResponseDTO).toList();
+        
+    }
+
 }

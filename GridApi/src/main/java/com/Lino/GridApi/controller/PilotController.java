@@ -1,5 +1,7 @@
 package com.Lino.GridApi.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,5 +62,17 @@ public class PilotController {
         // Return the dashboard if the status is (OK)
         return ResponseEntity.ok(response);
 
+    }
+
+    // GET Pilots: Get all pilots in the DB
+    @GetMapping()
+    public ResponseEntity<List<PilotComposedResponseDTO>> getAllPilots () {
+
+        // push the datails informations ready for the front end/Swagger
+        List<PilotComposedResponseDTO> responses = pilotService.getAllPilots();
+
+        // Return the list pilots if the status is (OK)
+        return ResponseEntity.ok(responses);
+        
     }
 }
