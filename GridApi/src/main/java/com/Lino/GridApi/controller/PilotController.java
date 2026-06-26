@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -91,7 +92,7 @@ public class PilotController {
 
     }
 
-    // PUT: Uudate a componsed pilot
+    // PUT: Update a componsed pilot
     @PutMapping("/update/componsed/{id}")
     public ResponseEntity<PilotComposedResponseDTO> updateComposedPilot(@PathVariable Long id, @Valid @RequestBody PilotUpdateComposedRequestDTO dto) {
 
@@ -102,4 +103,14 @@ public class PilotController {
         return ResponseEntity.ok(response);
 
     }
+
+    // DELETE: Delete a Simple Pilot
+    @DeleteMapping("/delete/simple/{id}")
+    public void deleteSimplePilot (@PathVariable Long id) {
+
+        // Delete a pilot without a license
+        pilotService.deleteSimplePilot(id);
+        
+    }
+
 }

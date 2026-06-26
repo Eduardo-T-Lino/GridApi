@@ -268,4 +268,25 @@ public class PilotService {
         return PilotMapper.toResponseDTO(pilot);
 
     }
+
+    @Transactional // Perform a rollback in case of an error
+    public void deleteSimplePilot(Long id) { // Delete the pilot with him don't have a FIA license
+
+        // Find the pilot with the user need
+        Pilot pilot = pilotRepository.findById(id)
+            .orElseThrow(() -> new RuntimeException("The pilot with ID: " + id + " no exist in the DB"));
+
+        // Check if the pilot exist
+        if (pilot == null) {
+            throw new RuntimeException("The pilot with ID: " + id + " no exist in the DB");
+        }
+
+        // Check 
+        if (pilot.getFiaLicense() != null) {
+            throw new IllegalArgumentException("The pilot: " + pilot.getName() + " hava a FIA license");
+        }
+
+        pilotRepository.delete(pilot);
+        
+    }
 }
