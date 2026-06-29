@@ -10,7 +10,7 @@ public record PilotComposedResponseDTO(
     String licenseNumber,
     String licenseCategory,
     Integer penaltyPoints,
-    List<CircuitResponseDTO> circuits
+    List<PilotCircuitResponseDTO> circuits
 ) {
 
 }

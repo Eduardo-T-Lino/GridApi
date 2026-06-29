@@ -104,12 +104,12 @@ public class PilotController {
 
     }
 
-    // DELETE: Delete a Simple Pilot
-    @DeleteMapping("/delete/simple/{id}")
+    // DELETE: Delete Pilot
+    @DeleteMapping("/delete/{id}")
     public void deleteSimplePilot (@PathVariable Long id) {
 
-        // Delete a pilot without a license
-        pilotService.deleteSimplePilot(id);
+        // Delete a pilot
+        pilotService.deletePilot(id);
         
     }
 

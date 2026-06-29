@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.Lino.GridApi.dto.pilot.PilotRequestDTO;
 import com.Lino.GridApi.dto.pilot.PilotResponseDTO;
-import com.Lino.GridApi.dto.pilotComposed.CircuitResponseDTO;
+import com.Lino.GridApi.dto.pilotComposed.PilotCircuitResponseDTO;
 import com.Lino.GridApi.dto.pilotComposed.PilotComposedRequestDTO;
 import com.Lino.GridApi.dto.pilotComposed.PilotComposedResponseDTO;
 import com.Lino.GridApi.model.FIALicense;
@@ -56,12 +56,12 @@ public class PilotMapper {
         if (pilot == null) return null;
 
         // Create a list circuits to save in the pilot.
-        List<CircuitResponseDTO> circuits = new ArrayList<>();
+        List<PilotCircuitResponseDTO> circuits = new ArrayList<>();
 
         // Check if the pilot has circuits.
         if (pilot.getCircuits() != null) {
             // Save all circuits in the list with all attributes
-            circuits = pilot.getCircuits().stream().map(c -> new CircuitResponseDTO(c.getId(),c.getName(), c.getCountry(), c.getLengthMeters()))
+            circuits = pilot.getCircuits().stream().map(c -> new PilotCircuitResponseDTO(c.getId(),c.getName(), c.getCountry(), c.getLengthMeters()))
             .toList();
         }
 

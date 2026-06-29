@@ -1,6 +1,6 @@
 package com.Lino.GridApi.dto.pilotComposed;
 
-public record CircuitResponseDTO(
+public record PilotCircuitResponseDTO(
     Long id,
     String name,
     String country,
