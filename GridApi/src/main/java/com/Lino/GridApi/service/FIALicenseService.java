@@ -1,5 +1,7 @@
 package com.Lino.GridApi.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,6 +55,31 @@ public class FIALicenseService {
 
         // Return the new license
         return FIALicenseMapper.toResponseDTO(savedLicense);
+
+    }
+
+    @Transactional(readOnly = true) // Perform a rollback in case of an error
+    public FIALicenseResponseDTO getLicenseById (Long id) { // Get the License by id
+
+        // Take the license via DB
+        FIALicense license = licenseRepository.findById(id)
+            .orElseThrow( () -> new RuntimeException("The FIA License with id: " + id + " dont't exist in the grid! "));
+
+        // Return the license to the Front end
+        return FIALicenseMapper.toResponseDTO(license);
+
+    }
+
+    @Transactional(readOnly = true) // Perform a rollback in case of an error
+    public List<FIALicenseResponseDTO> getAllLicenses () { // Get all license existing in the DB
+
+        // Take all licenses via DB
+        List<FIALicense> licenses = licenseRepository.findAll();
+
+        // Return all licenses ready for the Front
+        return licenses.stream()
+        .map(FIALicenseMapper :: toResponseDTO)
+        .toList();
         
     }
 }
