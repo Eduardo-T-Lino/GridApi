@@ -14,6 +14,7 @@ public record FIAlicenseRequestDTO(
     @NotNull(message = "The penalty points is mandatory!")
     Integer penaltyPoints,
 
+    @NotNull(message = "The Pilot identify is mandatory!")
     Long pilotId
     
 ) {
