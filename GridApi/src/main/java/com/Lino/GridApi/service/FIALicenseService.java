@@ -98,7 +98,7 @@ public class FIALicenseService {
             if (!dto.licenseNumber().isBlank()) {
                 
                 // Check if the license number already existing in the DB
-                if (dto.licenseNumber().equals(license.getLicenseNumber()) && licenseRepository.existsByLicenseNumber(dto.licenseNumber())) {
+                if (!dto.licenseNumber().equals(license.getLicenseNumber()) && licenseRepository.existsByLicenseNumber(dto.licenseNumber())) {
                     throw new IllegalArgumentException("The FIA license with number: " + dto.licenseNumber() + " already existing in the grid ");
                 }
 
@@ -120,18 +120,22 @@ public class FIALicenseService {
         if (dto.pilotId() != null) {
             
             // Check if the old license contains the new pilot identify
-            if (license.getPilot().getId() == dto.pilotId()) {
-                throw new IllegalArgumentException("The pilot with id: " + dto.pilotId() + " Already registred in this license. ");
+            if (!license.getPilot().getId().equals(dto.pilotId())) {
+                // Take the new pilot for the license in the DB
+                Pilot newpilot = pilotRepository.findById(dto.pilotId())
+                    .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + dto.pilotId() + " don't exist in the grid!"));
+
+                // Take the old pilot in the DB
+                Pilot oldpilot = pilotRepository.findById(license.getPilot().getId())
+                    .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + license.getPilot().getId() + " don't exist in the grid!"));
+
+                oldpilot.setFiaLicense(null);
+                
+                license.setPilot(newpilot);
+
+                newpilot.setFiaLicense(license);
+                
             }
-
-            // Take the pilot in the DB
-            Pilot pilot = pilotRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + dto.pilotId() + " don't exist in the grid!"));
-            
-            pilot.setFiaLicense(license);
-
-            license.setPilot(pilot);
-
         }
 
         return FIALicenseMapper.toResponseDTO(license);

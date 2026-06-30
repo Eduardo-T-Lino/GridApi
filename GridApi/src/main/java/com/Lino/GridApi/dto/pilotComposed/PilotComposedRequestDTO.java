@@ -2,8 +2,6 @@ package com.Lino.GridApi.dto.pilotComposed;
 
 import java.util.List;
 
-import com.Lino.GridApi.dto.FIAlicense.FIAlicenseRequestDTO;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -21,7 +19,7 @@ public record PilotComposedRequestDTO(
     String currentTeam,
 
     @NotNull(message = "The FIA license data is mandatory!")
-    FIAlicenseRequestDTO fiaLicense,
+    PilotFIALicenseRequestDTO fiaLicense,
 
     List<Long> circuitIds
 ) {
