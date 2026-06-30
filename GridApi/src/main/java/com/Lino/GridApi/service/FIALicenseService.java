@@ -136,4 +136,23 @@ public class FIALicenseService {
 
         return FIALicenseMapper.toResponseDTO(license);
     }
+
+    @Transactional // Perform a rollback in case of an error
+    public void deleteLicense (Long id) { // Delete the license for the DB
+
+        // Take the old license in the DB
+        FIALicense license = licenseRepository.findById(id)
+            .orElseThrow( () -> new RuntimeException("The FIA License with id: " + id + " dont't exist in the grid! "));
+
+        // Take the pilot in the DB
+        Pilot pilot = pilotRepository.findById(license.getPilot().getId())
+            .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + license.getPilot().getId() + " don't exist in the grid!"));
+
+        // Delete the license for the pilot
+        pilot.setFiaLicense(null);
+
+        // Delete the pilot the license for the DB
+        licenseRepository.delete(license);
+        
+    }
 }
