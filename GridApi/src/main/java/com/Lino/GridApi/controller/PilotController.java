@@ -64,7 +64,7 @@ public class PilotController {
         PilotComposedResponseDTO response = pilotService.getPilotDashboard(id);
 
         // Return the dashboard if the status is (OK)
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
@@ -76,7 +76,7 @@ public class PilotController {
         List<PilotComposedResponseDTO> responses = pilotService.getAllPilots();
 
         // Return the list pilots if the status is (OK)
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
         
     }
 
@@ -88,7 +88,7 @@ public class PilotController {
         PilotResponseDTO response = pilotService.updateSimplePilot(id, dto);
 
         // Return the dashboard if the status is (OK)
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
@@ -100,16 +100,19 @@ public class PilotController {
         PilotComposedResponseDTO response = pilotService.updateComposedPilot(id, dto);
 
         // Return the dashboard if the status is (OK)
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
     // DELETE: Delete Pilot
     @DeleteMapping("/delete/{id}")
-    public void deleteSimplePilot (@PathVariable Long id) {
+    public ResponseEntity<Void> deleteSimplePilot (@PathVariable Long id) {
 
         // Delete a pilot
         pilotService.deletePilot(id);
+
+        // Return the status of the Query
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         
     }
 

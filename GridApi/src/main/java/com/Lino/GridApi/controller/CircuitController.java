@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.Lino.GridApi.dto.circuit.CircuitRequestDTO;
 import com.Lino.GridApi.dto.circuit.CircuitResponseDTO;
+import com.Lino.GridApi.dto.circuit.CircuitUpdateRequestDTO;
 import com.Lino.GridApi.service.CircuitService;
 
 import jakarta.validation.Valid;
@@ -48,7 +49,7 @@ public class CircuitController {
         CircuitResponseDTO response = circuitService.getCircuit(id);
 
         // Return the dashboard if the status is (OK)
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
@@ -60,28 +61,31 @@ public class CircuitController {
         List<CircuitResponseDTO> responses = circuitService.getAllCircuits();
 
         // Return the list pilots if the status is (OK)
-        return ResponseEntity.ok(responses);
+        return ResponseEntity.status(HttpStatus.OK).body(responses);
         
     }
 
     // PUT: Update a circuit
     @PutMapping("/update/{id}")
-    public ResponseEntity<CircuitResponseDTO> updateCircuit(@PathVariable Long id, @Valid @RequestBody CircuitRequestDTO dto) {
+    public ResponseEntity<CircuitResponseDTO> updateCircuit(@PathVariable Long id, @Valid @RequestBody CircuitUpdateRequestDTO dto) {
 
         // push the datails informations ready for the front end/Swagger
         CircuitResponseDTO response = circuitService.updateCircuit(id, dto);
 
         // Return the dashboard if the status is (OK)
-        return ResponseEntity.ok(response);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
 
     }
 
     // DELETE: Delete circuit
     @DeleteMapping("/delete/{id}")
-    public void deleteCircuit (@PathVariable Long id) {
+    public ResponseEntity<Void> deleteCircuit (@PathVariable Long id) {
 
         // Delete a circuit
         circuitService.deletePilot(id);
+
+        // Return the status of the Query
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         
     }
 

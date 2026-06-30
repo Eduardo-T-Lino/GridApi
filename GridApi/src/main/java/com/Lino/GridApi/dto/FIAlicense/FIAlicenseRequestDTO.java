@@ -1,4 +1,4 @@
-package com.Lino.GridApi.dto.pilotComposed;
+package com.Lino.GridApi.dto.FIAlicense;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,7 +12,10 @@ public record FIAlicenseRequestDTO(
     String category,
 
     @NotNull(message = "The penalty points is mandatory!")
-    Integer penaltyPoints
+    Integer penaltyPoints,
+
+    @NotNull(message = "The Pilot identify is mandatory!")
+    Long pilotId
     
 ) {
 
