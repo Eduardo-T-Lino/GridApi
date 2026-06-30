@@ -1,10 +1,13 @@
 package com.Lino.GridApi.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.Lino.GridApi.dto.FIAlicense.FIALicenseResponseDTO;
+import com.Lino.GridApi.dto.FIAlicense.FIALicenseUpdateRequestDTO;
 import com.Lino.GridApi.dto.FIAlicense.FIAlicenseRequestDTO;
 import com.Lino.GridApi.mapper.FIALicenseMapper;
 import com.Lino.GridApi.model.FIALicense;
@@ -53,6 +56,107 @@ public class FIALicenseService {
 
         // Return the new license
         return FIALicenseMapper.toResponseDTO(savedLicense);
+
+    }
+
+    @Transactional(readOnly = true) // Perform a rollback in case of an error
+    public FIALicenseResponseDTO getLicenseById (Long id) { // Get the License by id
+
+        // Take the license via DB
+        FIALicense license = licenseRepository.findById(id)
+            .orElseThrow( () -> new RuntimeException("The FIA License with id: " + id + " dont't exist in the grid! "));
+
+        // Return the license to the Front end
+        return FIALicenseMapper.toResponseDTO(license);
+
+    }
+
+    @Transactional(readOnly = true) // Perform a rollback in case of an error
+    public List<FIALicenseResponseDTO> getAllLicenses () { // Get all license existing in the DB
+
+        // Take all licenses via DB
+        List<FIALicense> licenses = licenseRepository.findAll();
+
+        // Return all licenses ready for the Front
+        return licenses.stream()
+        .map(FIALicenseMapper :: toResponseDTO)
+        .toList();
+
+    }
+
+    @Transactional // Perform a rollback in case of an error
+    public FIALicenseResponseDTO updateLicense (Long id, FIALicenseUpdateRequestDTO dto) { // Update the license of 1 pilot
+
+        // Take the old license in the DB
+        FIALicense license = licenseRepository.findById(id)
+            .orElseThrow( () -> new RuntimeException("The FIA License with id: " + id + " dont't exist in the grid! "));
+
+        // Check if the license number is no null
+        if (dto.licenseNumber() != null) {
+            
+            // Check if the licenseNumber is not blank
+            if (!dto.licenseNumber().isBlank()) {
+                
+                // Check if the license number already existing in the DB
+                if (!dto.licenseNumber().equals(license.getLicenseNumber()) && licenseRepository.existsByLicenseNumber(dto.licenseNumber())) {
+                    throw new IllegalArgumentException("The FIA license with number: " + dto.licenseNumber() + " already existing in the grid ");
+                }
+
+                license.setLicenseNumber(dto.licenseNumber());
+            }
+        }
+
+        // Check if the category is no null
+        if (dto.category() != null) {
+            license.setCategory(dto.category());
+        }
+
+        // Check if the penalty points is no null
+        if (dto.penaltyPoints() != null) {
+            license.setPenaltyPoints(dto.penaltyPoints());
+        }
+        
+        // Check if the pilot identify is no null
+        if (dto.pilotId() != null) {
+            
+            // Check if the old license contains the new pilot identify
+            if (!license.getPilot().getId().equals(dto.pilotId())) {
+                // Take the new pilot for the license in the DB
+                Pilot newpilot = pilotRepository.findById(dto.pilotId())
+                    .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + dto.pilotId() + " don't exist in the grid!"));
+
+                // Take the old pilot in the DB
+                Pilot oldpilot = pilotRepository.findById(license.getPilot().getId())
+                    .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + license.getPilot().getId() + " don't exist in the grid!"));
+
+                oldpilot.setFiaLicense(null);
+                
+                license.setPilot(newpilot);
+
+                newpilot.setFiaLicense(license);
+                
+            }
+        }
+
+        return FIALicenseMapper.toResponseDTO(license);
+    }
+
+    @Transactional // Perform a rollback in case of an error
+    public void deleteLicense (Long id) { // Delete the license for the DB
+
+        // Take the old license in the DB
+        FIALicense license = licenseRepository.findById(id)
+            .orElseThrow( () -> new RuntimeException("The FIA License with id: " + id + " dont't exist in the grid! "));
+
+        // Take the pilot in the DB
+        Pilot pilot = pilotRepository.findById(license.getPilot().getId())
+            .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + license.getPilot().getId() + " don't exist in the grid!"));
+
+        // Delete the license for the pilot
+        pilot.setFiaLicense(null);
+
+        // Delete the pilot the license for the DB
+        licenseRepository.delete(license);
         
     }
 }
