@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.Lino.GridApi.dto.circuit.CircuitRequestDTO;
 import com.Lino.GridApi.dto.circuit.CircuitResponseDTO;
+import com.Lino.GridApi.dto.circuit.CircuitUpdateRequestDTO;
 import com.Lino.GridApi.mapper.CircuitMapper;
 import com.Lino.GridApi.model.Circuit;
 import com.Lino.GridApi.model.Pilot;
@@ -49,11 +50,17 @@ public class CircuitService {
                 Pilot pilot = pilotRepository.findById(id)
                     .orElseThrow(() -> new RuntimeException("The pilot with ID: " + id + " no exist in the DB"));
 
-                // Save the pilot in the list
-                pilots.add(pilot);
+                // Check if the circuit already exist in the pilot
+                if (!pilot.getCircuits().contains(circuit)) {
+                    // Save the circuit in the pilot
+                    pilot.getCircuits().add(circuit);
+                }
 
-                // Save the circuit in the pilot
-                pilot.getCircuits().add(circuit);
+                // Check if the pilot already exist in the circuit
+                if (!circuit.getPilots().contains(pilot)) {
+                    // Save the pilot in the circuit
+                    circuit.getPilots().add(pilot);
+                }
 
             }
 
@@ -98,7 +105,7 @@ public class CircuitService {
     }
 
     @Transactional // Perform a rollback in case of an error
-    public CircuitResponseDTO updateCircuit (Long id, CircuitRequestDTO dto) { // Update the informations of 1 circuit
+    public CircuitResponseDTO updateCircuit (Long id, CircuitUpdateRequestDTO dto) { // Update the informations of 1 circuit
 
         // Take the circuit in the DB
         Circuit circuit = circuitRepository.findById(id)
@@ -111,7 +118,7 @@ public class CircuitService {
             if (!dto.name().isBlank()) {
                 
                 // Check if the name exist in the DB or equals
-                if (!dto.name().equalsIgnoreCase(circuit.getName()) && circuitRepository.existsByName(circuit.getName())) {
+                if (!dto.name().equalsIgnoreCase(circuit.getName()) && circuitRepository.existsByName(dto.name())) {
 
                     // Launch the exception to the front end.
                     throw new IllegalArgumentException(
@@ -149,11 +156,17 @@ public class CircuitService {
                 Pilot pilot = pilotRepository.findById(pilotId)
                 .orElseThrow(() -> new RuntimeException("Pilot with the ID: " + id + " don't exist in the DB"));
 
-                // Save the circuit in the pilot
-                pilot.getCircuits().add(circuit);
+                // Check if the circuit already exist in the pilot
+                if (!pilot.getCircuits().contains(circuit)) {
+                    // Save the circuit in the pilot
+                    pilot.getCircuits().add(circuit);
+                }
 
-                // Save the pilot in the circuit
-                circuit.getPilots().add(pilot);
+                // Check if the pilot already exist in the circuit
+                if (!circuit.getPilots().contains(pilot)) {
+                    // Save the pilot in the circuit
+                    circuit.getPilots().add(pilot);
+                }
 
             }
         }

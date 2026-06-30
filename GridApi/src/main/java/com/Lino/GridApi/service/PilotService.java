@@ -88,11 +88,17 @@ public class PilotService {
                         .orElseThrow(() -> new RuntimeException(
                                 "Circuit with ID: " + circuitId + " it wasn't found on the calendar!"));
 
-                // Save the circuit in the pilot
-                pilot.getCircuits().add(circuit);
+                // Check if the circuit already exist in the pilot
+                if (!pilot.getCircuits().contains(circuit)) {
+                    // Save the circuit in the pilot
+                    pilot.getCircuits().add(circuit);
+                }
 
-                // Save the pilot in the circuit automatically
-                circuit.getPilots().add(pilot);
+                // Check if the pilot already exist in the circuit
+                if (!circuit.getPilots().contains(pilot)) {
+                    // Save the pilot in the circuit
+                    circuit.getPilots().add(pilot);
+                }
 
             }
         }
@@ -255,11 +261,17 @@ public class PilotService {
                         .orElseThrow(() -> new RuntimeException(
                                 "Circuit with ID: " + circuitId + " it wasn't found on the calendar!"));
 
-                // Save the circuit in the pilot
-                pilot.getCircuits().add(circuit);
+                // Check if the circuit already exist in the pilot
+                if (!pilot.getCircuits().contains(circuit)) {
+                    // Save the circuit in the pilot
+                    pilot.getCircuits().add(circuit);
+                }
 
-                // Save the pilot in the circuit automatically
-                circuit.getPilots().add(pilot);
+                // Check if the pilot already exist in the circuit
+                if (!circuit.getPilots().contains(pilot)) {
+                    // Save the pilot in the circuit
+                    circuit.getPilots().add(pilot);
+                }
 
             }
         }
